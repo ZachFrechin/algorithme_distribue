@@ -1,10 +1,13 @@
 from threading import Lock
+from Message import Message
 
 class Com:
-    def __init__(self, process):
+    def __init__(self, process = None):
         self.process = process
         self.clock = 0
         self._clock_mutex = Lock()
+        self._mail_box_mutex = Lock()
+        self.mail_box = []
 
     def inc_clock(self): 
         with self._clock_mutex:
@@ -21,3 +24,39 @@ class Com:
     def _set_clock(self, clock):
         with self._clock_mutex:
             self.clock = clock
+
+    def put_message(self, message : Message):
+        if not message.USER_MESSAGE:
+            raise TypeError("Only user messages can be put in the mail box")
+        with self._mail_box_mutex:
+            self.mail_box.append(message)
+
+    def get_message(self):
+        with self._mail_box_mutex:
+            return self.mail_box.pop(0)
+
+    def get_messages(self):
+        with self._mail_box_mutex:
+            messages = self.mail_box
+            self.mail_box = []
+            return messages
+
+    def get_message_from(self, source):
+        with self._mail_box_mutex:
+            messages = [message for message in self.mail_box if message.source == source]
+            if len(messages) == 0:
+                return None
+            self.mail_box.remove(messages[0])
+            return messages[0]
+
+    def get_messages_from(self, source):
+        with self._mail_box_mutex:
+            messages = [message for message in self.mail_box if message.source == source]
+            if len(messages) == 0:
+                return []
+            self.mail_box = [message for message in self.mail_box if message.source != source]
+            return messages
+
+    def has_messages(self):
+        with self._mail_box_mutex:
+            return len(self.mail_box) > 0
