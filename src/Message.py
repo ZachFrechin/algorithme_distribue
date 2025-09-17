@@ -63,7 +63,8 @@ class DedicatedMessage(UserMessage):
 class TokenMessage(SystemMessage):
     def __init__(self, token, stamp, dest, source = None):
         self.token = token
-        super().__init__(self.token, stamp, dest, source)
+        super().__init__(self.token, stamp, source)
+        self.dest = dest
 
     @classmethod
     def new_token_message(cls, token, stamp, dest, source = None):

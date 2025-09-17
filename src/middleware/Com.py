@@ -1,5 +1,6 @@
 from threading import Lock
-from Message import Message
+from Message import Message, BroadcastMessage, DedicatedMessage
+from pyeventbus3.pyeventbus3 import PyBus
 
 class Com:
     def __init__(self, process = None):
@@ -60,3 +61,17 @@ class Com:
     def has_messages(self):
         with self._mail_box_mutex:
             return len(self.mail_box) > 0
+
+    def broadcast(self, payload):
+        if self.process is None:
+            raise ValueError("Process is not set")
+        self.inc_clock()
+        message = BroadcastMessage.new_broadcast_message(payload, self.get_clock(), self.process.name)
+        message.broadcast(PyBus.Instance())
+
+    def send_to(self, payload, dest):
+        if self.process is None:
+            raise ValueError("Process is not set")
+        self.inc_clock()
+        message = DedicatedMessage.new_dedicated_message(payload, self.get_clock(), dest, self.process.name)
+        message.send(PyBus.Instance())
