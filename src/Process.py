@@ -1,20 +1,18 @@
 from re import S
 from threading import Lock, Thread
 from time import sleep, time
-from Message import BroadcastMessage, DedicatedMessage, TokenMessage, SyncMessage, RegistrationMessage, RequestMaxIdMessage, ResponseMaxIdMessage
+import time as time_module
+from Message import BroadcastMessage, DedicatedMessage, TokenMessage, SyncMessage, RegistrationMessage, RequestMaxIdMessage, ResponseMaxIdMessage, IdRequestMessage, IdAssignmentMessage, HeartbeatMessage
 from pyeventbus3.pyeventbus3 import *
 from middleware.Com import Com
 
 
 class Process(Thread):
-        
-    nbProcessCreated = 0
-    
+
     def __init__(self, name, npProcess):
         Thread.__init__(self)
 
         self.npProcess = npProcess
-        self.myId = Process.nbProcessCreated
         self.myProcessName = name
         self.name = "MainThread-" + name
         self.clock = 0
@@ -22,17 +20,23 @@ class Process(Thread):
         self.SC = 0
         self.sync_ready_count = 0
         self.sync_barrier = False
-        
-        self.magic_number = 99999999999999
-        self.random_number = None
 
-        # État pour le nouveau système d'attribution d'ID
-        self.is_max_id = False  # Suis-je le détenteur de l'ID max ?
-        self.id_assignment_mutex = Lock()  # Mutex pour attribution ID
+        # Système de numérotation automatique sans variables de classe
+        self.temp_id = int(time_module.time() * 1000000) % 1000000  # ID temporaire unique basé sur timestamp
+        self.myId = None  # ID final assigné par le coordinateur
+        self.is_coordinator = False
+        self.next_id_to_assign = 0
+        self.id_assigned = False
+        self.pending_id_requests = []  # Liste des processus demandant un ID
+
+        # Variables pour heartbeat et détection de pannes
+        self.active_processes = set()  # Processus vivants connus
+        self.last_heartbeat = {}  # Dernier heartbeat reçu de chaque processus
+        self.heartbeat_interval = 2.0  # Intervalle d'envoi de heartbeat
+        self.failure_timeout = 5.0  # Délai pour considérer un processus mort
 
         self.com = Com(self)
-
-        Process.nbProcessCreated += 1
+        self.com.nbProcess = self.npProcess
 
         self.alive = True
         self.start()
@@ -123,15 +127,45 @@ class Process(Thread):
     #     print(f"{self.name} passed synchronization barrier, clock: {self.clock}")
 
     def run(self):
+        # Démarrer l'attribution d'ID automatique
+        if not self.id_assigned:
+            self.com.initiate_id_assignment()
+
+        # Attendre que l'ID soit assigné
+        while not self.id_assigned:
+            sleep(0.1)
+
+        # Démarrer le système de heartbeat
+        self.com.start_heartbeat()
+
         loop = 0
         while self.alive:
             print(self.name + " Loop: " + str(loop) + " clock: " + str(self.com.get_clock()))
             sleep(1)
 
-            
-                
+            # Test des communications synchrones
+            if loop == 3 and self.myId == 0:
+                print(f"\n{self.name} === Testing broadcastSync ===")
+                self.com.broadcastSync("Hello from coordinator!", 0)
 
+            if loop == 5 and self.myId == 1:
+                print(f"\n{self.name} === Testing sendToSync ===")
+                self.com.sendToSync("Direct message", 2)
 
+            if loop == 5 and self.myId == 2:
+                print(f"\n{self.name} === Testing recevFromSync ===")
+                received = self.com.recevFromSync(1)
+                print(f"{self.name} received: {received}")
+
+            # Test de synchronisation
+            if loop == 8 and self.myId == 0:
+                self.com.synchronize()
+
+            if loop == 10 and self.myId == 1:
+                self.com.synchronize()
+
+            if loop == 7 and self.myId == 2:
+                self.com.synchronize()
 
             loop+=1
         print(self.name + " stopped")

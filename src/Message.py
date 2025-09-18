@@ -130,3 +130,106 @@ class ResponseMaxIdMessage(UserMessage):
     def get_max_id(self):
         return self.current_max_id
 
+class BroadcastSyncMessage(UserMessage):
+    """Message pour broadcast synchrone avec accusé de réception"""
+    def __init__(self, payload, stamp, sender, msg_id, source = None):
+        super().__init__(payload, stamp, source)
+        self.sender = sender
+        self.msg_id = msg_id
+
+    @classmethod
+    def new_broadcast_sync_message(cls, payload, stamp, sender, msg_id, source = None):
+        return cls(payload, stamp, sender, msg_id, source)
+
+    def get_sender(self):
+        return self.sender
+
+    def get_msg_id(self):
+        return self.msg_id
+
+class BroadcastSyncAckMessage(SystemMessage):
+    """Message d'accusé de réception pour broadcast synchrone"""
+    def __init__(self, msg_id, stamp, original_sender, source = None):
+        super().__init__(msg_id, stamp, source)
+        self.msg_id = msg_id
+        self.original_sender = original_sender
+
+    @classmethod
+    def new_broadcast_sync_ack_message(cls, msg_id, stamp, original_sender, source = None):
+        return cls(msg_id, stamp, original_sender, source)
+
+    def get_msg_id(self):
+        return self.msg_id
+
+    def get_original_sender(self):
+        return self.original_sender
+
+class SendToSyncMessage(UserMessage):
+    """Message pour communication point-à-point synchrone"""
+    def __init__(self, payload, stamp, dest, msg_id, source = None):
+        super().__init__(payload, stamp, source)
+        self.dest = dest
+        self.msg_id = msg_id
+
+    @classmethod
+    def new_send_to_sync_message(cls, payload, stamp, dest, msg_id, source = None):
+        return cls(payload, stamp, dest, msg_id, source)
+
+    def get_dest(self):
+        return self.dest
+
+    def get_msg_id(self):
+        return self.msg_id
+
+class SendToSyncAckMessage(SystemMessage):
+    """Message d'accusé de réception pour communication point-à-point synchrone"""
+    def __init__(self, msg_id, stamp, original_sender, source = None):
+        super().__init__(msg_id, stamp, source)
+        self.msg_id = msg_id
+        self.original_sender = original_sender
+
+    @classmethod
+    def new_send_to_sync_ack_message(cls, msg_id, stamp, original_sender, source = None):
+        return cls(msg_id, stamp, original_sender, source)
+
+    def get_msg_id(self):
+        return self.msg_id
+
+    def get_original_sender(self):
+        return self.original_sender
+
+class IdRequestMessage(SystemMessage):
+    """Message pour demander un ID unique"""
+    def __init__(self, stamp, source = None):
+        super().__init__("ID_REQUEST", stamp, source)
+
+    @classmethod
+    def new_id_request_message(cls, stamp, source = None):
+        return cls(stamp, source)
+
+class IdAssignmentMessage(SystemMessage):
+    """Message pour assigner un ID à un processus"""
+    def __init__(self, assigned_id, stamp, dest, source = None):
+        super().__init__(assigned_id, stamp, source)
+        self.assigned_id = assigned_id
+        self.dest = dest
+
+    @classmethod
+    def new_id_assignment_message(cls, assigned_id, stamp, dest, source = None):
+        return cls(assigned_id, stamp, dest, source)
+
+    def get_assigned_id(self):
+        return self.assigned_id
+
+    def get_dest(self):
+        return self.dest
+
+class HeartbeatMessage(SystemMessage):
+    """Message heartbeat pour prouver qu'un processus est vivant"""
+    def __init__(self, stamp, source = None):
+        super().__init__("HEARTBEAT", stamp, source)
+
+    @classmethod
+    def new_heartbeat_message(cls, stamp, source = None):
+        return cls(stamp, source)
+
