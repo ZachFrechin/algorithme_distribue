@@ -10,7 +10,7 @@ class Com:
         self._mail_box_mutex = Lock()
         self.mail_box = []
 
-    def inc_clock(self): 
+    def inc_clock(self):
         with self._clock_mutex:
             self.clock += 1
 
