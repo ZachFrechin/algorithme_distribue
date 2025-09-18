@@ -1,6 +1,6 @@
 from threading import Lock
 from Message import Message, BroadcastMessage, DedicatedMessage
-from pyeventbus3.pyeventbus3 import PyBus
+from pyeventbus3.pyeventbus3 import PyBus, subscribe, Mode
 
 class Com:
     def __init__(self, process = None):
@@ -9,6 +9,8 @@ class Com:
         self._clock_mutex = Lock()
         self._mail_box_mutex = Lock()
         self.mail_box = []
+
+        PyBus.Instance().register(self, self)
 
     def inc_clock(self):
         with self._clock_mutex:
@@ -31,6 +33,7 @@ class Com:
             raise TypeError("Only user messages can be put in the mail box")
         with self._mail_box_mutex:
             self.mail_box.append(message)
+            self._update_clock_on_receive(message.stamp)
 
     def get_message(self):
         with self._mail_box_mutex:
@@ -62,6 +65,29 @@ class Com:
         with self._mail_box_mutex:
             return len(self.mail_box) > 0
 
+    def get_messages_type(self, type = None):
+        if type is None:
+            return None
+
+        with self._mail_box_mutex:
+            match type:
+                case "broadcast" :
+                    messages = [message for message in self.mail_box if isinstance(message, BroadcastMessage)]
+                case "dedicated" :
+                    messages = [message for message in self.mail_box if isinstance(message, BroadcastMessage)]
+                case _:
+                    return None
+            return messages
+
+    def get_message_type(self, type = None):
+        if type is None:
+            return None
+        messages = self.get_messages_type(type)
+        if len(messages) == 0:
+            return None
+        return messages[0]
+
+
     def broadcast(self, payload):
         if self.process is None:
             raise ValueError("Process is not set")
@@ -75,3 +101,9 @@ class Com:
         self.inc_clock()
         message = DedicatedMessage.new_dedicated_message(payload, self.get_clock(), dest, self.process.name)
         message.send(PyBus.Instance())
+
+    @subscribe(threadMode = Mode.PARALLEL, onEvent=Message)
+    def on_message(self, event):
+        if event.source == self.process.name:
+            return
+        self.put_message(event)
