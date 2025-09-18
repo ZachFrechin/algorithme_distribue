@@ -87,3 +87,46 @@ class SyncMessage(UserMessage):
 
     def get_type(self):
         return self.msg_type
+
+class RegistrationMessage(UserMessage):
+    def __init__(self, stamp, source = None):
+        super().__init__("ID_REQUEST", stamp, source)
+
+    @classmethod
+    def new_registration_message(cls, stamp, source = None):
+        return cls(stamp, source)
+
+class RegisterMessage(UserMessage):
+    def __init__(self, process_id, stamp, source = None):
+        super().__init__(process_id, stamp, source)
+        self.process_id = process_id
+
+    @classmethod
+    def new_register_message(cls, process_id, stamp, source = None):
+        return cls(process_id, stamp, source)
+
+    def get_process_id(self):
+        return self.process_id
+
+class RequestMaxIdMessage(UserMessage):
+    """Message pour demander qui a l'ID maximum"""
+    def __init__(self, stamp, source = None):
+        super().__init__("REQUEST_MAX_ID", stamp, source)
+
+    @classmethod
+    def new_request_max_id_message(cls, stamp, source = None):
+        return cls(stamp, source)
+
+class ResponseMaxIdMessage(UserMessage):
+    """Message pour répondre avec son ID maximum"""
+    def __init__(self, current_max_id, stamp, source = None):
+        super().__init__(current_max_id, stamp, source)
+        self.current_max_id = current_max_id
+
+    @classmethod
+    def new_response_max_id_message(cls, current_max_id, stamp, source = None):
+        return cls(current_max_id, stamp, source)
+
+    def get_max_id(self):
+        return self.current_max_id
+

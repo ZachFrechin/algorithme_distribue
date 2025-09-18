@@ -1,11 +1,15 @@
 from time import sleep
 from Process import Process
 
-def launch(nbProcess, runningTime=5):
+def launch(nbProcess, runningTime=10):
     processes = []
 
-    for i in range(nbProcess):
+    for i in range(nbProcess - 1):
         processes = processes + [Process("P"+str(i), nbProcess)]
+
+    sleep(runningTime)
+
+    processes.append(Process("P" + str(nbProcess - 1), nbProcess))
 
     sleep(runningTime)
 
@@ -20,6 +24,6 @@ if __name__ == '__main__':
 
     #bus = EventBus.getInstance()
     
-    launch(nbProcess=3, runningTime=3)
+    launch(nbProcess=3, runningTime=5)
 
     #bus.stop()

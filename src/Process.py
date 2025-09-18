@@ -1,7 +1,7 @@
 from re import S
 from threading import Lock, Thread
 from time import sleep, time
-from Message import BroadcastMessage, DedicatedMessage, TokenMessage, SyncMessage
+from Message import BroadcastMessage, DedicatedMessage, TokenMessage, SyncMessage, RegistrationMessage, RequestMaxIdMessage, ResponseMaxIdMessage
 from pyeventbus3.pyeventbus3 import *
 from middleware.Com import Com
 
@@ -24,10 +24,15 @@ class Process(Thread):
         self.sync_barrier = False
         
         self.magic_number = 99999999999999
+        self.random_number = None
+
+        # État pour le nouveau système d'attribution d'ID
+        self.is_max_id = False  # Suis-je le détenteur de l'ID max ?
+        self.id_assignment_mutex = Lock()  # Mutex pour attribution ID
+
         self.com = Com(self)
 
         Process.nbProcessCreated += 1
-        PyBus.Instance().register(self, self)
 
         self.alive = True
         self.start()
@@ -72,129 +77,8 @@ class Process(Thread):
     #         self.clock = max(self.clock, event.get_stamp()) + 1
     #         self.sync_barrier = False
 
-    def get_an_id(self, blacklist_number = None):
-        import random  # Fix missing import
 
-        # Generate random number
-        rand_num = random.randint(0, self.magic_number)
-        while rand_num == blacklist_number:
-            rand_num = random.randint(0, self.magic_number)
-
-        # Broadcast the random number
-        self.com.broadcast(rand_num)
-        sleep(2)
-
-        messages = self.com.get_messages_type("broadcast")
-        if len(messages) == 0:
-            raise ValueError("No message received, no connection possible")
-
-        # Collect all random numbers from other processes
-        random_array = [message.payload for message in messages]
-        random_array = sorted(random_array)
-
-        # Check for collision
-        if rand_num in random_array:
-            print(f"{self.name} collision detected with {rand_num}, retrying...")
-            return self.get_an_id(rand_num)  # Fix: return result of recursive call
-
-        self.myId = rand_num
-        print(f"{self.name} assigned random ID: {self.myId}")
-        return True
-
-    def get_sequential_id(self):
-        """
-        NEW METHOD: Distributed sequential ID assignment using leader-based consensus
-        Achieves consecutive numbering starting from 0 without class variables
-        """
-        from time import time
-
-        # Phase 1: Leader Election using deterministic selection
-        election_payload = {
-            "type": "LEADER_ELECTION",
-            "candidate": self.name,
-            "timestamp": time(),
-            "process_count": self.npProcess
-        }
-
-        self.com.broadcast(election_payload)
-        sleep(1.5)  # Allow all election messages to propagate
-
-        # Collect all election messages
-        messages = self.com.get_messages_type("broadcast")
-        election_messages = []
-
-        for msg in messages:
-            if (isinstance(msg.payload, dict) and
-                msg.payload.get("type") == "LEADER_ELECTION"):
-                election_messages.append(msg)
-
-        # Determine leader (process with lexicographically smallest name)
-        all_candidates = [(self.name, time())]  # Include self
-        for msg in election_messages:
-            all_candidates.append((msg.payload["candidate"], msg.payload["timestamp"]))
-
-        # Sort by name for deterministic leader selection
-        all_candidates.sort(key=lambda x: x[0])
-        leader_name = all_candidates[0][0]
-
-        print(f"{self.name} elected leader: {leader_name}")
-
-        # Phase 2: ID Assignment
-        if self.name == leader_name:
-            # Leader assigns IDs
-            assigned_id = self._coordinate_sequential_assignment(all_candidates)
-        else:
-            # Follower waits for assignment
-            assigned_id = self._wait_for_sequential_assignment(leader_name)
-
-        self.myId = assigned_id
-        print(f"{self.name} assigned sequential ID: {self.myId}")
-
-        return assigned_id
-
-    def _coordinate_sequential_assignment(self, all_candidates):
-        """Leader coordinates sequential ID assignment"""
-
-        # Create deterministic ordering
-        process_names = [candidate[0] for candidate in all_candidates]
-        process_names = sorted(set(process_names))  # Remove duplicates and sort
-
-        # Broadcast ID assignments
-        for i, process_name in enumerate(process_names):
-            assignment_payload = {
-                "type": "ID_ASSIGNMENT",
-                "target": process_name,
-                "assigned_id": i,
-                "coordinator": self.name
-            }
-            self.com.broadcast(assignment_payload)
-
-        # Leader gets ID 0 (first in sorted order)
-        leader_id = process_names.index(self.name)
-        print(f"Leader {self.name} coordinated assignments: {list(enumerate(process_names))}")
-
-        return leader_id
-
-    def _wait_for_sequential_assignment(self, leader_name):
-        """Wait for ID assignment from leader"""
-
-        timeout_start = time()
-        timeout_duration = 5.0
-
-        while time() - timeout_start < timeout_duration:
-            sleep(0.1)
-
-            messages = self.com.get_messages_type("broadcast")
-            for msg in messages:
-                if (isinstance(msg.payload, dict) and
-                    msg.payload.get("type") == "ID_ASSIGNMENT" and
-                    msg.payload.get("target") == self.name):
-
-                    assigned_id = msg.payload["assigned_id"]
-                    print(f"{self.name} received ID {assigned_id} from leader {leader_name}")
-                    return assigned_id
-
-        raise TimeoutError(f"{self.name} timeout waiting for ID assignment from {leader_name}")
+   
 
     # def broadcast(self, msg):
     #     if self.alive:
@@ -244,11 +128,10 @@ class Process(Thread):
             print(self.name + " Loop: " + str(loop) + " clock: " + str(self.com.get_clock()))
             sleep(1)
 
-            if loop == 0:
-                # Use sequential ID assignment instead of random
-                self.get_sequential_id()
+            
+                
 
-            print(self.name + " myId: " + str(self.myId))
+
 
             loop+=1
         print(self.name + " stopped")

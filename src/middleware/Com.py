@@ -1,6 +1,7 @@
 from threading import Lock
-from Message import Message, BroadcastMessage, DedicatedMessage
+from Message import Message, BroadcastMessage, DedicatedMessage, RegisterMessage, RegistrationMessage, RequestMaxIdMessage, ResponseMaxIdMessage
 from pyeventbus3.pyeventbus3 import PyBus, subscribe, Mode
+
 
 class Com:
     def __init__(self, process = None):
@@ -15,6 +16,7 @@ class Com:
     def inc_clock(self):
         with self._clock_mutex:
             self.clock += 1
+            return self.clock
 
     def get_clock(self):
         with self._clock_mutex:
@@ -23,6 +25,7 @@ class Com:
     def _update_clock_on_receive(self, clock):
         with self._clock_mutex:
             self.clock = max(self.clock, clock) + 1
+            return self.clock
 
     def _set_clock(self, clock):
         with self._clock_mutex:
@@ -73,8 +76,12 @@ class Com:
             match type:
                 case "broadcast" :
                     messages = [message for message in self.mail_box if isinstance(message, BroadcastMessage)]
+                case "register" :
+                    messages = [message for message in self.mail_box if isinstance(message, RegisterMessage)]
                 case "dedicated" :
-                    messages = [message for message in self.mail_box if isinstance(message, BroadcastMessage)]
+                    messages = [message for message in self.mail_box if isinstance(message, DedicatedMessage)]
+                case "max_id_response" :
+                    messages = [message for message in self.mail_box if isinstance(message, ResponseMaxIdMessage)]
                 case _:
                     return None
             return messages
@@ -83,7 +90,7 @@ class Com:
         if type is None:
             return None
         messages = self.get_messages_type(type)
-        if len(messages) == 0:
+        if messages is None or len(messages) == 0:
             return None
         return messages[0]
 
@@ -92,18 +99,26 @@ class Com:
         if self.process is None:
             raise ValueError("Process is not set")
         self.inc_clock()
-        message = BroadcastMessage.new_broadcast_message(payload, self.get_clock(), self.process.name)
+        message = BroadcastMessage.new_broadcast_message(payload, self.get_clock(), self.process.myId)
         message.broadcast(PyBus.Instance())
 
     def send_to(self, payload, dest):
         if self.process is None:
             raise ValueError("Process is not set")
         self.inc_clock()
-        message = DedicatedMessage.new_dedicated_message(payload, self.get_clock(), dest, self.process.name)
+        message = DedicatedMessage.new_dedicated_message(payload, self.get_clock(), dest, self.process.myId)
         message.send(PyBus.Instance())
 
-    @subscribe(threadMode = Mode.PARALLEL, onEvent=Message)
-    def on_message(self, event):
-        if event.source == self.process.name:
+    def register(self, payload):
+        if self.process is None:
+            raise ValueError("Process is not set")
+        self.inc_clock()
+        message = RegisterMessage.new_register_message(payload, self.get_clock(), self.process.myId)
+        message.broadcast(PyBus.Instance())
+
+    @subscribe(threadMode = Mode.PARALLEL, onEvent=BroadcastMessage)
+    def on_broadcast(self, event):
+        if event.source == self.process.myId:
             return
+
         self.put_message(event)

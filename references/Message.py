@@ -77,3 +77,9 @@ class SyncMessage(Message):
 
     def get_type(self):
         return self.msg_type
+
+class RegisterMessage(BroadcastMessage):
+    
+    @classmethod
+    def new_register_message(cls, process):
+        return cls(process)
