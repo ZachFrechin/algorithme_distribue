@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Com - Documentation Technique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-bg: #0f172a;
+            --light-bg: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --code-bg: #f1f5f9;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: #ffffff;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            color: white;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .nav-menu {
+            padding: 1rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: 0 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #334155;
+            color: white;
+            border-left-color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: #334155;
+            color: white;
+            border-left-color: var(--primary-color);
+        }
+
+        .nav-sub-item {
+            padding-left: 2.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .content {
+            padding: 2rem;
+            max-width: 900px;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 3rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 2.5rem 0 1rem 0;
+        }
+
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem 0;
+        }
+
+        h5 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Code blocks */
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        /* Cards and boxes */
+        .card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #fffbeb;
+            border: 1px solid #fed7aa;
+            border-left: 4px solid var(--warning-color);
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .success-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid var(--success-color);
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--light-bg);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Method signature */
+        .method-signature {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        /* Parameter list */
+        .param-list {
+            background: var(--light-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .param-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .param-item:last-child {
+            border-bottom: none;
+        }
+
+        .param-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 120px;
+        }
+
+        .param-type {
+            background: #e2e8f0;
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            margin-right: 1rem;
+        }
+
+        .param-desc {
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        /* Algorithm steps */
+        .algorithm {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .algorithm-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .algorithm-title::before {
+            content: "⚡";
+            margin-right: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .algorithm ol {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .algorithm li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* State diagram */
+        .state-diagram {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .state {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin: 0.5rem;
+            font-weight: 500;
+        }
+
+        .state.inactive {
+            background: var(--text-muted);
+        }
+
+        .state-arrow {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin: 0 1rem;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin: 0 0.25rem;
+        }
+
+        .badge.success {
+            background: var(--success-color);
+        }
+
+        .badge.warning {
+            background: var(--warning-color);
+        }
+
+        .badge.danger {
+            background: var(--danger-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+        }
+
+        /* Scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Highlight target */
+        :target {
+            scroll-margin-top: 100px;
+        }
+
+        /* Links */
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Section spacing */
+        section {
+            margin-bottom: 3rem;
+        }
+
+        /* Architecture diagram */
+        .architecture-diagram {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .component-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 0.5rem;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Module Com</div>
+                <div class="sidebar-subtitle">Documentation Technique v3.0</div>
+            </div>
+
+            <div class="nav-menu">
+                <div class="nav-section">
+                    <div class="nav-section-title">Vue d'ensemble</div>
+                    <a href="#introduction" class="nav-item">Introduction</a>
+                    <a href="#architecture" class="nav-item">Architecture</a>
+                    <a href="#installation" class="nav-item">Installation</a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">API Core</div>
+                    <a href="#classe-com" class="nav-item">Classe Com</a>
+                    <a href="#horloge-logique" class="nav-item">Horloge Logique</a>
+                    <a href="#logging" class="nav-item">Système de Logs</a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Communications</div>
+                    <a href="#messages-async" class="nav-item">Messages Asynchrones</a>
+                    <a href="#mailbox" class="nav-item nav-sub-item">MailBox API</a>
+                    <a href="#messages-sync" class="nav-item">Messages Synchrones</a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Synchronisation</div>
+                    <a href="#token-ring" class="nav-item">Token Ring</a>
+                    <a href="#section-critique" class="nav-item nav-sub-item">Section Critique</a>
+                    <a href="#barrieres" class="nav-item">Barrières de Sync</a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Système Distribué</div>
+                    <a href="#election" class="nav-item">Système d'Élection</a>
+                    <a href="#heartbeat" class="nav-item">Heartbeat & Pannes</a>
+                    <a href="#handlers" class="nav-item">Gestionnaires d'Événements</a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Guides Avancés</div>
+                    <a href="#cycle-vie" class="nav-item">Cycle de Vie</a>
+                    <a href="#performance" class="nav-item">Performance</a>
+                    <a href="#exemples" class="nav-item">Exemples</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title">Documentation Technique - Module Com</h1>
+            </header>
+
+            <div class="content">
+                <!-- Introduction -->
+                <section id="introduction">
+                    <h1>Introduction</h1>
+                    <p>Le module <strong>Com</strong> constitue le cœur du middleware de communication pour systèmes distribués. Il fournit une abstraction complète et robuste pour la communication inter-processus, gérant automatiquement l'attribution d'identifiants uniques, les élections de leader, la synchronisation distribuée, et offre des primitives de communication synchrones et asynchrones.</p>
+
+                    <div class="info-box">
+                        <p><strong>Objectif principal :</strong> Simplifier le développement d'applications distribuées en fournissant une couche d'abstraction puissante qui gère automatiquement la complexité des communications distribuées.</p>
+                    </div>
+
+                    <h3>Fonctionnalités Clés</h3>
+                    <div class="card">
+                        <ul>
+                            <li><span class="badge success">Communication</span> Messages asynchrones et synchrones</li>
+                            <li><span class="badge">Synchronisation</span> Token ring et barrières distribuées</li>
+                            <li><span class="badge warning">Élection</span> Attribution automatique d'IDs</li>
+                            <li><span class="badge danger">Résilience</span> Détection de pannes et réorganisation</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Architecture -->
+                <section id="architecture">
+                    <h2>Architecture du Système</h2>
+
+                    <div class="architecture-diagram">
+                        <h3 style="color: white; margin-bottom: 1.5rem;">Architecture Modulaire</h3>
+                        <div>
+                            <div class="component-box">LogicalClock</div>
+                            <div class="component-box">ProcessLogger</div>
+                            <div class="component-box">ElectionManager</div>
+                        </div>
+                        <div style="margin: 1rem 0; font-size: 2rem;">↓</div>
+                        <div>
+                            <div class="component-box" style="background: rgba(255, 255, 255, 0.2); font-weight: 600;">Classe Com (Interface Principale)</div>
+                        </div>
+                        <div style="margin: 1rem 0; font-size: 2rem;">↓</div>
+                        <div>
+                            <div class="component-box">MailBoxManager</div>
+                            <div class="component-box">SyncCommunication</div>
+                            <div class="component-box">HeartbeatManager</div>
+                        </div>
+                    </div>
+
+                    <h3>Principe de Fonctionnement</h3>
+                    <div class="algorithm">
+                        <div class="algorithm-title">Initialisation du Système</div>
+                        <ol>
+                            <li>Chaque processus crée une instance Com</li>
+                            <li>Enregistrement automatique sur PyEventBus3</li>
+                            <li>Participation à l'élection pour l'attribution d'ID</li>
+                            <li>Initialisation des composants de communication</li>
+                            <li>Démarrage du système de heartbeat</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <!-- Installation -->
+                <section id="installation">
+                    <h2>Installation et Configuration</h2>
+
+                    <h3>Dépendances</h3>
+                    <pre><code># requirements.txt
+pyeventbus3>=0.10.1.1
+threading  # Module standard Python
+time       # Module standard Python</code></pre>
+
+                    <h3>Démarrage Rapide</h3>
+                    <pre><code>from Process import Process
+
+# Créer un processus avec un nom et le nombre total prévu
+process = Process("Alice", 3)  # 3 processus au total
+
+# Le processus démarre automatiquement :
+# 1. Élection de leader
+# 2. Attribution d'ID unique
+# 3. Initialisation des communications</code></pre>
+                </section>
+
+                <!-- Classe Com -->
+                <section id="classe-com">
+                    <h2>Classe Com - Interface Principale</h2>
+
+                    <div class="method-signature">
+                        def __init__(self, process=None)
+                    </div>
+
+                    <h3>Attributs Principaux</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Attribut</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>process</code></td>
+                                <td>Process</td>
+                                <td>Référence vers le processus parent</td>
+                            </tr>
+                            <tr>
+                                <td><code>logical_clock</code></td>
+                                <td>LogicalClock</td>
+                                <td>Horloge logique de Lamport</td>
+                            </tr>
+                            <tr>
+                                <td><code>election_manager</code></td>
+                                <td>ElectionManager</td>
+                                <td>Gestionnaire des élections et IDs</td>
+                            </tr>
+                            <tr>
+                                <td><code>mailbox_manager</code></td>
+                                <td>MailBoxManager</td>
+                                <td>Boîte aux lettres thread-safe</td>
+                            </tr>
+                            <tr>
+                                <td><code>heartbeat_manager</code></td>
+                                <td>HeartbeatManager</td>
+                                <td>Détection de pannes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Attributs Token Ring</h3>
+                    <div class="param-list">
+                        <div class="param-item">
+                            <span class="param-name">token</span>
+                            <span class="param-type">Token|None</span>
+                            <span class="param-desc">Token actuellement détenu</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-name">SC</span>
+                            <span class="param-type">int</span>
+                            <span class="param-desc">État section critique (0=libre, 1=demandé, 2=possédé)</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-name">token_mutex</span>
+                            <span class="param-type">Lock</span>
+                            <span class="param-desc">Verrou pour accès thread-safe</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Horloge Logique -->
+                <section id="horloge-logique">
+                    <h2>Gestion de l'Horloge Logique</h2>
+
+                    <p>L'horloge logique implémente l'algorithme de Lamport pour maintenir un ordre causal entre les événements distribués.</p>
+
+                    <h3>inc_clock()</h3>
+                    <div class="method-signature">
+                        def inc_clock(self) -> int
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">Algorithme d'Incrémentation</div>
+                        <ol>
+                            <li>Incrémente la valeur locale de l'horloge de 1</li>
+                            <li>Garantit un timestamp unique et croissant</li>
+                            <li>Retourne la nouvelle valeur</li>
+                        </ol>
+                    </div>
+
+                    <div class="success-box">
+                        <p><strong>Cas d'usage :</strong> Automatiquement appelé lors de l'envoi de messages, peut être appelé manuellement pour des événements locaux importants.</p>
+                    </div>
+
+                    <h3>_update_clock_on_receive()</h3>
+                    <div class="method-signature">
+                        def _update_clock_on_receive(self, clock) -> int
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">Algorithme de Lamport</div>
+                        <ol>
+                            <li>Récupère l'horloge locale actuelle</li>
+                            <li>Récupère le timestamp du message reçu</li>
+                            <li>Calcule : <code>new_clock = max(local_clock, received_clock) + 1</code></li>
+                            <li>Met à jour l'horloge locale</li>
+                            <li>Retourne la nouvelle valeur</li>
+                        </ol>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Garantie :</strong> L'horloge préserve l'ordre causal des événements et assure la cohérence temporelle distribuée.</p>
+                    </div>
+                </section>
+
+                <!-- Messages Asynchrones -->
+                <section id="messages-async">
+                    <h2>Système de Messages Asynchrones</h2>
+
+                    <p>Le système de messages asynchrones utilise une architecture publish-subscribe via PyEventBus3. Les messages sont déposés dans une boîte aux lettres thread-safe.</p>
+
+                    <h3>broadcast()</h3>
+                    <div class="method-signature">
+                        def broadcast(self, payload)
+                    </div>
+
+                    <div class="param-list">
+                        <div class="param-item">
+                            <span class="param-name">payload</span>
+                            <span class="param-type">str</span>
+                            <span class="param-desc">Contenu du message à diffuser</span>
+                        </div>
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">Mécanisme de Broadcast</div>
+                        <ol>
+                            <li>Vérifie l'initialisation du processus</li>
+                            <li>Incrémente l'horloge logique locale</li>
+                            <li>Crée un BroadcastMessage avec timestamp</li>
+                            <li>Publie sur PyEventBus (non-bloquant)</li>
+                            <li>Retourne immédiatement</li>
+                        </ol>
+                    </div>
+
+                    <h3>send_to()</h3>
+                    <div class="method-signature">
+                        def send_to(self, payload, dest)
+                    </div>
+
+                    <div class="param-list">
+                        <div class="param-item">
+                            <span class="param-name">payload</span>
+                            <span class="param-type">str</span>
+                            <span class="param-desc">Contenu du message</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-name">dest</span>
+                            <span class="param-type">int</span>
+                            <span class="param-desc">ID du processus destinataire</span>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <p><strong>Note :</strong> Les messages sont filtrés automatiquement - seul le processus destinataire les traite.</p>
+                    </div>
+                </section>
+
+                <!-- MailBox API -->
+                <section id="mailbox">
+                    <h2>API MailBox - Gestion des Messages</h2>
+
+                    <p>La mailbox est une structure FIFO thread-safe pour stocker et récupérer les messages asynchrones.</p>
+
+                    <h3>Récupération de Messages</h3>
+
+                    <h4>get_message()</h4>
+                    <div class="method-signature">
+                        def get_message(self) -> Message|None
+                    </div>
+                    <p>Récupère et retire le premier message de la file (FIFO).</p>
+
+                    <h4>get_messages()</h4>
+                    <div class="method-signature">
+                        def get_messages(self) -> List[Message]
+                    </div>
+                    <p>Récupère et retire tous les messages, vidant complètement la mailbox.</p>
+
+                    <h4>get_message_from()</h4>
+                    <div class="method-signature">
+                        def get_message_from(self, source) -> Message|None
+                    </div>
+                    <p>Récupère le premier message d'une source spécifique.</p>
+
+                    <h3>Filtrage par Type</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Méthode</th>
+                                <th>Type Supporté</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>get_messages_type("broadcast")</code></td>
+                                <td>BroadcastMessage</td>
+                                <td>Messages diffusés à tous</td>
+                            </tr>
+                            <tr>
+                                <td><code>get_messages_type("dedicated")</code></td>
+                                <td>DedicatedMessage</td>
+                                <td>Messages point-à-point</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Inspection Non-Destructive</h3>
+                    <div class="method-signature">
+                        def has_messages(self) -> bool
+                    </div>
+                    <p>Vérifie la présence de messages sans les retirer de la mailbox.</p>
+                </section>
+
+                <!-- Messages Synchrones -->
+                <section id="messages-sync">
+                    <h2>Communications Synchrones</h2>
+
+                    <p>Les communications synchrones bloquent l'émetteur jusqu'à réception d'un accusé de réception, garantissant que le message a été effectivement reçu et traité.</p>
+
+                    <h3>broadcastSync()</h3>
+                    <div class="method-signature">
+                        def broadcastSync(self, payload, sender_id)
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">Protocole Broadcast Synchrone</div>
+                        <ol>
+                            <li>Crée un BroadcastSyncMessage avec ID unique</li>
+                            <li>Diffuse le message sur PyEventBus</li>
+                            <li>Initialise un compteur d'ACKs (nbProcess - 1)</li>
+                            <li>Entre en attente active des confirmations</li>
+                            <li>Décrémente le compteur pour chaque ACK reçu</li>
+                            <li>Sort quand tous les ACKs sont reçus</li>
+                        </ol>
+                    </div>
+
+                    <h3>sendToSync() / recevFromSync()</h3>
+                    <div class="method-signature">
+                        def sendToSync(self, payload, dest)<br>
+                        def recevFromSync(self, source) -> str
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Utilisation :</strong> Ces méthodes doivent être appelées en miroir - un processus appelle sendToSync() pendant qu'un autre appelle recevFromSync().</p>
+                    </div>
+
+                    <div class="state-diagram">
+                        <div class="state">Émetteur: sendToSync()</div>
+                        <span class="state-arrow">→</span>
+                        <div class="state">Message envoyé</div>
+                        <span class="state-arrow">→</span>
+                        <div class="state">Récepteur: recevFromSync()</div>
+                        <span class="state-arrow">→</span>
+                        <div class="state">ACK automatique</div>
+                        <span class="state-arrow">→</span>
+                        <div class="state">Émetteur débloqué</div>
+                    </div>
+                </section>
+
+                <!-- Token Ring -->
+                <section id="token-ring">
+                    <h2>Token Ring et Section Critique</h2>
+
+                    <p>Le système implémente un algorithme de token ring pour garantir l'exclusion mutuelle. Un token unique circule selon une topologie en anneau logique.</p>
+
+                    <h3>Formation de l'Anneau</h3>
+                    <div class="algorithm">
+                        <div class="algorithm-title">Topologie Logique</div>
+                        <ol>
+                            <li>P0 → P1 → P2 → ... → Pn-1 → P0</li>
+                            <li>Chaque processus calcule son suivant : <code>(myId + 1) % nbProcess</code></li>
+                            <li>Adaptation automatique lors des pannes</li>
+                        </ol>
+                    </div>
+
+                    <h3>États de Section Critique</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>État SC</th>
+                                <th>Signification</th>
+                                <th>Comportement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge">0</span></td>
+                                <td>Libre</td>
+                                <td>Aucune demande, token transféré immédiatement</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge warning">1</span></td>
+                                <td>Demandé</td>
+                                <td>Attente du token, bloque dans request_SC()</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge success">2</span></td>
+                                <td>Possédé</td>
+                                <td>En section critique, accès exclusif garanti</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Section Critique -->
+                <section id="section-critique">
+                    <h2>API Section Critique</h2>
+
+                    <h3>request_SC()</h3>
+                    <div class="method-signature">
+                        def request_SC(self)
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">Demande d'Accès Exclusif</div>
+                        <ol>
+                            <li>Met SC = 1 (marque la demande)</li>
+                            <li>Log l'intention d'accès</li>
+                            <li>Entre en boucle d'attente : <code>while SC != 2</code></li>
+                            <li>Retourne quand le token est obtenu (SC = 2)</li>
+                        </ol>
+                    </div>
+
+                    <div class="warning-box">
+                        <p><strong>Attention :</strong> Cette méthode est bloquante jusqu'à obtention du token. Garantit l'exclusion mutuelle.</p>
+                    </div>
+
+                    <h3>release_SC()</h3>
+                    <div class="method-signature">
+                        def release_SC(self)
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">Libération de la Section Critique</div>
+                        <ol>
+                            <li>Log "Exiting critical section"</li>
+                            <li>Met SC = 0 (marque la libération)</li>
+                            <li>Le handler on_token() détecte SC = 0</li>
+                            <li>Transfert automatique au processus suivant</li>
+                        </ol>
+                    </div>
+
+                    <h3>Exemple d'Utilisation</h3>
+                    <pre><code>// Demander l'accès exclusif
+com.request_SC()
+
+// Section critique - accès garanti exclusif
+critical_resource.modify()
+calculate_important_result()
+
+// Libérer pour les autres processus
+com.release_SC()</code></pre>
+                </section>
+
+                <!-- Barrières -->
+                <section id="barrieres">
+                    <h2>Barrières de Synchronisation</h2>
+
+                    <p>Les barrières permettent à tous les processus de se synchroniser à un point donné. Aucun ne peut continuer tant que tous n'ont pas atteint la barrière.</p>
+
+                    <h3>synchronize()</h3>
+                    <div class="method-signature">
+                        def synchronize(self)
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">Protocole de Synchronisation</div>
+                        <ol>
+                            <li>Incrémente sync_generation (nouvelle barrière)</li>
+                            <li>Met sync_barrier = True</li>
+                            <li>Envoie message "READY" avec génération</li>
+                            <li>Attend que tous les processus soient prêts</li>
+                            <li>Le coordinateur envoie "SYNC_RELEASE"</li>
+                            <li>Tous sortent de l'attente simultanément</li>
+                        </ol>
+                    </div>
+
+                    <h3>Mécanisme des Générations</h3>
+                    <div class="info-box">
+                        <p><strong>Problème résolu :</strong> Les générations évitent la confusion entre différentes barrières consécutives et préviennent les boucles infinies de synchronisation.</p>
+                    </div>
+
+                    <h3>Auto-Jointure Intelligente</h3>
+                    <div class="success-box">
+                        <p><strong>Fonctionnalité avancée :</strong> Un processus qui reçoit un READY rejoint automatiquement la barrière, permettant à un seul processus d'initier la synchronisation globale.</p>
+                    </div>
+                </section>
+
+                <!-- Système d'Élection -->
+                <section id="election">
+                    <h2>Système d'Élection et Attribution d'IDs</h2>
+
+                    <p>Le système d'élection permet l'attribution automatique et décentralisée d'identifiants uniques via un algorithme d'élection par comparaison de nombres aléatoires.</p>
+
+                    <h3>request_dynamic_id()</h3>
+                    <div class="method-signature">
+                        def request_dynamic_id(self)
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">Algorithme d'Attribution d'ID</div>
+                        <ol>
+                            <li><strong>Phase 1 :</strong> Détection de coordinateur (PING_COORDINATOR)</li>
+                            <li><strong>Phase 2 :</strong> Si coordinateur trouvé → demande d'ID</li>
+                            <li><strong>Phase 3 :</strong> Si pas de coordinateur → élection</li>
+                            <li><strong>Élection :</strong> Tire nombre aléatoire (1-1,000,000)</li>
+                            <li><strong>Collecte :</strong> Attend 1.5s pour tous les nombres</li>
+                            <li><strong>Gagnant :</strong> Plus grand nombre devient coordinateur</li>
+                        </ol>
+                    </div>
+
+                    <h3>Gestion des Égalités</h3>
+                    <div class="warning-box">
+                        <p><strong>Départage :</strong> En cas d'égalité sur le nombre aléatoire, le processus avec le plus petit temp_id gagne. Si égalité persistante, re-tirage automatique.</p>
+                    </div>
+
+                    <h3>Attribution Automatique</h3>
+                    <div class="algorithm">
+                        <div class="algorithm-title">Actions du Coordinateur</div>
+                        <ol>
+                            <li>S'attribue l'ID 0 (coordinateur)</li>
+                            <li>Démarre le système de heartbeat</li>
+                            <li>Assigne les IDs 1, 2, 3... aux participants triés</li>
+                            <li>Diffuse le nombre total de processus</li>
+                            <li>Met à jour le système de détection de pannes</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <!-- Heartbeat -->
+                <section id="heartbeat">
+                    <h2>Heartbeat et Détection de Pannes</h2>
+
+                    <p>Le système de heartbeat permet la détection automatique des pannes et la réorganisation dynamique du système distribué.</p>
+
+                    <h3>Mécanisme de Heartbeat</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Paramètre</th>
+                                <th>Valeur</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Intervalle d'envoi</td>
+                                <td>2 secondes</td>
+                                <td>Fréquence des signaux de vie</td>
+                            </tr>
+                            <tr>
+                                <td>Timeout de détection</td>
+                                <td>5 secondes</td>
+                                <td>Délai avant détection de panne</td>
+                            </tr>
+                            <tr>
+                                <td>Ratio de tolérance</td>
+                                <td>2.5x</td>
+                                <td>Marge de sécurité réseau</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Réorganisation après Panne</h3>
+                    <div class="algorithm">
+                        <div class="algorithm-title">Processus de Réorganisation</div>
+                        <ol>
+                            <li><strong>Détection :</strong> Timeout de 5s sans heartbeat</li>
+                            <li><strong>Classification :</strong> Coordinateur vs processus ordinaire</li>
+                            <li><strong>Réorganisation :</strong> Combler les trous dans la numérotation</li>
+                            <li><strong>Notification :</strong> Messages IdReassignmentMessage</li>
+                            <li><strong>Adaptation :</strong> Token ring et barrières mises à jour</li>
+                        </ol>
+                    </div>
+
+                    <h3>Exemple de Réorganisation</h3>
+                    <div class="state-diagram">
+                        <div style="color: white;">
+                            <div><strong>Avant panne :</strong> P0, P1, P2, P3, P4</div>
+                            <div style="margin: 1rem 0;">↓ P2 tombe en panne ↓</div>
+                            <div><strong>Après réorganisation :</strong> P0, P1, P2(ex-P3), P3(ex-P4)</div>
+                        </div>
+                    </div>
+
+                    <h3>start_heartbeat() / stop_heartbeat()</h3>
+                    <div class="param-list">
+                        <div class="param-item">
+                            <span class="param-name">start_heartbeat()</span>
+                            <span class="param-type">void</span>
+                            <span class="param-desc">Démarre l'envoi périodique automatique</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-name">stop_heartbeat()</span>
+                            <span class="param-type">void</span>
+                            <span class="param-desc">Arrête les signaux (simule une panne)</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Gestionnaires d'Événements -->
+                <section id="handlers">
+                    <h2>Gestionnaires d'Événements</h2>
+
+                    <p>Le système utilise PyEventBus3 avec le mode PARALLEL pour le traitement concurrent des événements. Chaque handler est décoré avec @subscribe.</p>
+
+                    <h3>Handlers Principaux</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Handler</th>
+                                <th>Type d'Événement</th>
+                                <th>Fonction</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>on_broadcast()</code></td>
+                                <td>BroadcastMessage</td>
+                                <td>Traite messages diffusés + messages système</td>
+                            </tr>
+                            <tr>
+                                <td><code>on_dedicated()</code></td>
+                                <td>DedicatedMessage</td>
+                                <td>Messages point-à-point filtrés par destinataire</td>
+                            </tr>
+                            <tr>
+                                <td><code>on_token()</code></td>
+                                <td>TokenMessage</td>
+                                <td>Gestion complète du token ring</td>
+                            </tr>
+                            <tr>
+                                <td><code>on_sync()</code></td>
+                                <td>SyncMessage</td>
+                                <td>Messages READY/SYNC_RELEASE des barrières</td>
+                            </tr>
+                            <tr>
+                                <td><code>on_heartbeat()</code></td>
+                                <td>HeartbeatMessage</td>
+                                <td>Signaux de vie pour détection de pannes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Filtrage Intelligent</h3>
+                    <div class="info-box">
+                        <p><strong>Optimisation :</strong> Les handlers filtrent automatiquement les messages propres au processus et séparent les messages système des messages utilisateur.</p>
+                    </div>
+
+                    <h3>Mode PARALLEL</h3>
+                    <div class="warning-box">
+                        <p><strong>Concurrence :</strong> Chaque handler s'exécute dans son propre thread, permettant le traitement concurrent. Nécessite une synchronisation appropriée avec mutex.</p>
+                    </div>
+                </section>
+
+                <!-- Cycle de Vie -->
+                <section id="cycle-vie">
+                    <h2>Cycle de Vie d'un Processus</h2>
+
+                    <div class="state-diagram">
+                        <div style="color: white;">
+                            <div><strong>États du Processus Distribué</strong></div>
+                        </div>
+                    </div>
+
+                    <h3>Phases du Cycle de Vie</h3>
+                    <div class="algorithm">
+                        <div class="algorithm-title">1. Phase d'Initialisation</div>
+                        <ol>
+                            <li>Génération du temp_id (nombre aléatoire)</li>
+                            <li>Création de l'instance Com</li>
+                            <li>Enregistrement sur PyEventBus</li>
+                            <li>Démarrage du thread processus</li>
+                        </ol>
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">2. Phase d'Élection</div>
+                        <ol>
+                            <li>Recherche de coordinateur existant</li>
+                            <li>Si absent : tirage de nombre aléatoire</li>
+                            <li>Diffusion et collecte des nombres</li>
+                            <li>Détermination du gagnant</li>
+                        </ol>
+                    </div>
+
+                    <div class="algorithm">
+                        <div class="algorithm-title">3. Phase Opérationnelle</div>
+                        <ol>
+                            <li>Attribution de l'ID permanent</li>
+                            <li>Démarrage du heartbeat</li>
+                            <li>Participation au token ring</li>
+                            <li>Communications et synchronisations</li>
+                        </ol>
+                    </div>
+
+                    <h3>Gestion des Transitions</h3>
+                    <div class="success-box">
+                        <p><strong>Robustesse :</strong> Le système gère automatiquement les transitions d'état et peut récupérer des pannes temporaires ou des conditions de course.</p>
+                    </div>
+                </section>
+
+                <!-- Performance -->
+                <section id="performance">
+                    <h2>Performance et Optimisations</h2>
+
+                    <h3>Thread Safety</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Composant</th>
+                                <th>Mécanisme</th>
+                                <th>Protection</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MailBox</td>
+                                <td>Mutex unique</td>
+                                <td>Accès concurrent sécurisé</td>
+                            </tr>
+                            <tr>
+                                <td>Token Ring</td>
+                                <td>token_mutex</td>
+                                <td>Manipulation atomique du token</td>
+                            </tr>
+                            <tr>
+                                <td>Heartbeat</td>
+                                <td>Lock interne</td>
+                                <td>Mise à jour thread-safe des timestamps</td>
+                            </tr>
+                            <tr>
+                                <td>Horloge</td>
+                                <td>Opérations atomiques</td>
+                                <td>Incrémentation cohérente</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Complexité Algorithmique</h3>
+                    <div class="param-list">
+                        <div class="param-item">
+                            <span class="param-name">Communications</span>
+                            <span class="param-type">O(1)</span>
+                            <span class="param-desc">Envoi et réception de messages</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-name">Synchronisation</span>
+                            <span class="param-type">O(p)</span>
+                            <span class="param-desc">Barrière avec p processus</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-name">Élection</span>
+                            <span class="param-type">O(p)</span>
+                            <span class="param-desc">Attribution d'IDs pour p processus</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-name">Token Ring</span>
+                            <span class="param-type">O(p)</span>
+                            <span class="param-desc">Tour complet de l'anneau</span>
+                        </div>
+                    </div>
+
+                    <h3>Optimisations Implémentées</h3>
+                    <div class="card">
+                        <ul>
+                            <li><span class="badge">Filtrage</span> Messages système séparés de la mailbox utilisateur</li>
+                            <li><span class="badge success">Logs</span> Détection intelligente des doublons</li>
+                            <li><span class="badge warning">Mémoire</span> Nettoyage automatique des structures temporaires</li>
+                            <li><span class="badge">Attente</span> Boucles optimisées avec sleep(0.01)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Exemples -->
+                <section id="exemples">
+                    <h2>Exemples d'Utilisation</h2>
+
+                    <h3>Application Distribuée Complète</h3>
+                    <pre><code>from Process import Process
+from time import sleep
+
+class DistributedApplication(Process):
+    def run(self):
+        # Attribution automatique d'ID
+        self.com.request_dynamic_id()
+
+        loop = 0
+        while self.alive:
+            if loop % 5 == 0:
+                self.com.log(f"Loop: {loop}")
+
+            # Communications asynchrones
+            if loop == 1:
+                self.com.broadcast(f"Hello from P{self.myId}")
+                if self.myId > 0:
+                    self.com.send_to("Private message", 0)
+
+            # Traitement de la mailbox
+            if loop == 2:
+                if self.com.has_messages():
+                    messages = self.com.get_messages()
+                    for msg in messages:
+                        self.com.log(f"Received: {msg.get_payload()}")
+
+            # Section critique (mutual exclusion)
+            if loop == 3 and self.myId == 1:
+                self.com.request_SC()
+                self.com.log("Critical section - exclusive access")
+                sleep(1)  # Travail critique
+                self.com.release_SC()
+
+            # Barrière de synchronisation
+            if loop == 5:
+                self.com.synchronize()
+                self.com.log("All processes synchronized!")
+
+            # Communication synchrone
+            if loop == 6 and self.myId == 0:
+                self.com.broadcastSync("Sync message from coordinator", 0)
+
+            sleep(1)
+            loop += 1
+
+# Utilisation
+if __name__ == "__main__":
+    processes = []
+    for i in range(3):
+        name = ["Alice", "Bob", "Charlie"][i]
+        processes.append(DistributedApplication(name, 3))
+
+    # Les processus démarrent automatiquement
+    sleep(30)  # Laisser tourner 30 secondes
+
+    # Arrêt propre
+    for p in processes:
+        p.stop()
+    for p in processes:
+        p.waitStopped()</code></pre>
+
+                    <h3>Pattern de Communication Producteur-Consommateur</h3>
+                    <pre><code># Processus producteur
+if self.myId == 0:
+    for i in range(10):
+        self.com.send_to(f"Task {i}", 1)
+        self.com.log(f"Sent task {i}")
+
+# Processus consommateur
+if self.myId == 1:
+    while self.com.has_messages():
+        task = self.com.get_message()
+        self.com.log(f"Processing: {task.get_payload()}")
+        # Traitement de la tâche...
+        sleep(0.5)</code></pre>
+
+                    <h3>Coordination avec Barrières</h3>
+                    <pre><code># Phase de calcul distribué
+self.com.log("Starting computation phase")
+result = compute_local_part()
+
+# Synchronisation avant agrégation
+self.com.synchronize()
+
+# Phase d'agrégation (coordinateur seulement)
+if self.process.is_coordinator:
+    final_result = aggregate_results()
+    self.com.broadcastSync(f"Final result: {final_result}", 0)</code></pre>
+                </section>
+
+                <footer style="margin-top: 4rem; padding: 2rem 0; border-top: 1px solid var(--border-color); color: var(--text-muted); text-align: center;">
+                    <p>Documentation technique du Module Com - Version 3.0</p>
+                    <p>Middleware de communication pour systèmes distribués</p>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Navigation active
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            const sections = document.querySelectorAll('section[id]');
+
+            // Scroll to section on nav click
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Highlight active section
+            window.addEventListener('scroll', function() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('href').substring(1) === current) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

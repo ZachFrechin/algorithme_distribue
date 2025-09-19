@@ -1,3 +1,4 @@
+"""Objet simple représentant le jeton pour l'algorithme d'anneau à jeton."""
 class Token:
     """Représente un token dans l'algorithme d'anneau à jeton"""
     
